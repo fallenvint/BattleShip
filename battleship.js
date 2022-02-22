@@ -23,7 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	const refrestBtn = document.createElement('input');
 	let currentPlayer = 'user';
 	let isGameOver = false;
-	
 
 	let createBoard = (grid, squares) => {
 		for (let i = 0; i < boardWidth*boardWidth; i++) {
