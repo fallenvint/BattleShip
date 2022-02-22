@@ -337,11 +337,11 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	function winCheck() {
-		if(shipCount === 1){
+		if(shipCount === 20){
 			status.innerHTML = '<span>Вы выиграли</span>';
 			gameOver();
 		}
-		if(cpuShipCount === 1){
+		if(cpuShipCount === 20){
 			status.innerHTML = '<span>Соперник выиграл!</span>';
 			gameOver();
 		}
