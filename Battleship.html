@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="battleship.css">
+	<title>Battle Ships</title>
+</head>
+<body>
+	<div class="grid-names">
+		<div>Наши поля!</div>
+		<div>Поля соперника!</div>
+	</div>
+	<div class="battle-fields">
+		<div class="grid grid-user">
+			<div class="h-coordinate">
+				<div></div>
+				<div>А</div>
+				<div>Б</div>
+				<div>В</div>
+				<div>Г</div>
+				<div>Д</div>
+				<div>Е</div>
+				<div>Ж</div>
+				<div>З</div>
+				<div>И</div>
+				<div>К</div>
+			</div>
+			<div class="v-coordinate">
+				<div>1</div>
+				<div>2</div>
+				<div>3</div>
+				<div>4</div>
+				<div>5</div>
+				<div>6</div>
+				<div>7</div>
+				<div>8</div>
+				<div>9</div>
+				<div>10</div>
+			</div>
+			<div class="grid-field"></div>
+		</div>
+		<div class="grid grid-computer">
+			<div class="h-coordinate">
+				<div></div>
+				<div>А</div>
+				<div>Б</div>
+				<div>В</div>
+				<div>Г</div>
+				<div>Д</div>
+				<div>Е</div>
+				<div>Ж</div>
+				<div>З</div>
+				<div>И</div>
+				<div>К</div>
+			</div>
+			<div class="v-coordinate">
+				<div>1</div>
+				<div>2</div>
+				<div>3</div>
+				<div>4</div>
+				<div>5</div>
+				<div>6</div>
+				<div>7</div>
+				<div>8</div>
+				<div>9</div>
+				<div>10</div>
+			</div>
+			<div class="grid-field"></div>
+		</div>
+		<div class="status"></div>
+	</div>
+	<div class="ships-container">
+		<div id="patrol-1" class="ship patrol" draggable="true"><div deck-id="0"></div></div>
+		<div id="patrol-2" class="ship patrol" draggable="true"><div deck-id="0"></div></div>
+		<div id="patrol-3" class="ship patrol" draggable="true"><div deck-id="0"></div></div>
+		<div id="patrol-4" class="ship patrol" draggable="true"><div deck-id="0"></div></div>
+		<div id="destroyer-1" class="ship destroyer" draggable="true"><div deck-id="0"></div><div deck-id="1"></div></div>
+		<div id="destroyer-2" class="ship destroyer" draggable="true"><div deck-id="0"></div><div deck-id="1"></div></div>
+		<div id="destroyer-3" class="ship destroyer" draggable="true"><div deck-id="0"></div><div deck-id="1"></div></div>
+		<div id="submarine-1" class="ship submarine" draggable="true"><div deck-id="0"></div><div deck-id="1"></div><div deck-id="2"></div></div>
+		<div id="submarine-2" class="ship submarine" draggable="true"><div deck-id="0"></div><div deck-id="1"></div><div deck-id="2"></div></div>
+		<div id="cruiser" class="ship cruiser" draggable="true"><div deck-id="0"></div><div deck-id="1"></div><div deck-id="2"></div><div deck-id="3"></div></div>
+	</div>
+	<div class="start-game">
+		<div>
+			<input class="start-btn btn" value="В бой!" type="button">
+		</div>
+	</div>
+</body>
+<script src="battleship.js"></script>
+<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+</html>

@@ -1,0 +1,193 @@
+*, ::after, ::before {
+	box-sizing: border-box;
+}
+html, body {
+	height: 100%;
+}
+body {
+	position: relative;
+	margin: 0;
+	padding: 0;
+	font-family: Montserrat, sans-serif;
+	font-size: 16px;
+	font-weight: 400;
+	line-height: 1.4;
+	color: #999999;
+	background-color: #FFFFFF;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	user-select: none; 
+}
+.grid-names {
+	display: flex;
+}
+.grid-names > div {
+	width: 50%;
+	font-size: 20px;
+	font-weight: bold;
+	text-align: center;
+}
+.battle-fields {
+	position: relative;
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	justify-items: center;
+}
+.grid {
+	display: grid;
+	grid-template-columns: 40px 400px;
+	margin: 0 auto 40px;
+}
+.grid .h-coordinate {
+	display: flex;
+	flex-direction: row;
+	grid-column-start: 1;
+	grid-column-end: 3;
+	grid-row-start: 1;
+	grid-row-end: 2;
+}
+.grid .v-coordinate {
+	display: flex;
+	flex-direction: column;
+}
+.grid .h-coordinate > div, .grid .v-coordinate > div {
+	width: 40px;
+	height: 40px;
+	line-height: 40px;
+	text-align: center;
+	color: #000;
+}
+.grid .grid-field{
+	position: relative;
+	display: grid;
+	grid-template-columns: repeat(10, 40px);
+	grid-template-rows: repeat(10, 40px);
+	border-top: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	overflow: hidden;
+}
+.grid .grid-field.closed:before {
+	content: '';
+	position: absolute;
+	display: block;
+	width: 100%;
+	height: 100%;
+	background-color: rgb(204 204 204 / 30%);
+}
+.grid .grid-field > div {
+	width: 40px;
+	height: 40px;
+	border-bottom: 1px solid #ccc;
+	border-left: 1px solid #ccc;
+}
+.ships-container {
+	position: relative;
+	height: 160px;
+	width: 280px;
+	margin: 0 auto;
+}
+.ships-container > div {
+	position: absolute;
+	display: flex;
+	flex-direction: column;
+}
+.ships-container > div.horizontal {
+	flex-direction: row;
+}
+.ships-container > .ship > div {
+	width: 40px;
+	height: 40px;
+	border: 1px solid #ccc;
+}
+.ships-container > .patrol {
+	width: 40px;
+	left: 0;
+}
+.ships-container > .destroyer {
+	left: 80px;
+}
+.ships-container > .submarine {
+	left: 160px;
+}
+.ships-container > .cruiser {
+	left: 240px;
+}
+.ships-container > .destroyer.horizontal {
+	left: 80px;
+}
+.ships-container > .submarine.horizontal {
+	left: 160px;
+}
+.ships-container > .destroyer.horizontal ~ .submarine {
+	left: 200px;
+}
+.ships-container > .cruiser.horizontal {
+	left: 240px;
+}
+.ships-container > .destroyer.horizontal ~ .cruiser {
+	left: 280px;
+}
+.ships-container > .submarine.horizontal ~ .cruiser {
+	left: 320px;
+}
+.ships-container > .destroyer.horizontal ~ .submarine.horizontal ~ .cruiser {
+	left: 360px;
+}
+.status {
+	position: absolute;
+	top: 50%;
+	text-align: center;
+}
+.start-game {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	display: none;
+	justify-content: center;
+	align-items: center;
+	background-color: rgba(123, 149, 148, .8);
+}
+.start-game.show {
+	display: flex;
+}
+.btn {
+	display: block;
+	min-width: 150px;
+	border: 1px solid #eaeaea;
+	padding: 20px 40px;
+	border-radius: 50px;
+	font-weight: bold;
+	cursor: pointer;
+	background-color: #ffffff;
+}
+.btn:focus {
+	background-color: #bdbdbd;
+	color: #ffffff;
+	box-shadow: 0 0 10px 1px #5a6c6c;
+}
+.grid-computer .grid-field > div {
+	background-color: transparent;
+}
+.taken {
+	background-color: #e5e5e5;
+}
+.patrol {
+	background-color: red;
+}
+.destroyer {
+	background-color: blue;
+}
+.submarine {
+	background-color: green;
+}
+.cruiser {
+	background-color: yellow;
+}
+.miss {
+	background-color: black!important;
+}
+.boom {
+	background-color: orange!important;
+}
