@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const userSquares = [];
 	const computerSquares = [];
 	const boardWidth = 10;
+	const shipList = [3,2,2,1,1,1,0,0,0,0];
 	let selectedShipIndex;
 	let draggedShip;
 	let draggedShipClasses;
@@ -40,28 +41,28 @@ document.addEventListener('DOMContentLoaded', () => {
 	{
 		name: 'patrol',
 		directions: [
-		[0]
+			[0]
 		]
 	},
 	{
 		name: 'destroyer',
 		directions: [
-		[0, 1],
-		[0, boardWidth]
+			[0, 1],
+			[0, boardWidth]
 		]
 	},
 	{
 		name: 'submarine',
 		directions: [
-		[0, 1, 2],
-		[0, boardWidth, boardWidth*2]
+			[0, 1, 2],
+			[0, boardWidth, boardWidth*2]
 		]
 	},
 	{
 		name: 'cruiser',
 		directions: [
-		[0, 1, 2, 3],
-		[0, boardWidth, boardWidth*2, boardWidth*3]
+			[0, 1, 2, 3],
+			[0, boardWidth, boardWidth*2, boardWidth*3]
 		]
 	}
 	];
@@ -70,8 +71,12 @@ document.addEventListener('DOMContentLoaded', () => {
 		let randomDirection = Math.floor(Math.random() * ship.directions.length);
 		let currentShipDirection = ship.directions[randomDirection];
 
-		if (randomDirection === 0) direction = 1;
-		if (randomDirection === 1) direction = 10;
+		if (randomDirection === 0) {
+			direction = 1;
+		}
+		if (randomDirection === 1) {
+			direction = 10;
+		}
 
 		let randomStart = Math.abs(Math.floor(Math.random() * computerSquares.length - (ship.directions[0].length * direction)));
 		const isTaken = currentShipDirection.some(index => computerSquares[randomStart + index].classList.contains('taken'));
@@ -98,20 +103,32 @@ document.addEventListener('DOMContentLoaded', () => {
 				case (ship.name === 'patrol'):
 				currentShipDirection.forEach(index => computerSquares[randomStart + index].classList.add('ship', 'taken', ship.name));
 
-				if (y1 >= 0) currentShipDirection.forEach(index => computerSquares[y1 + index].classList.add('taken'));
-				if (y2 <= computerSquares.length - 1) currentShipDirection.forEach(index => computerSquares[y2 + index].classList.add('taken'));
+				if (y1 >= 0) {
+					currentShipDirection.forEach(index => computerSquares[y1 + index].classList.add('taken'));
+				}
+				if (y2 <= computerSquares.length - 1) {
+					currentShipDirection.forEach(index => computerSquares[y2 + index].classList.add('taken'));
+				}
 
 				if (x1 >= 0 && x1%10 != 9) {
 					computerSquares[x1].classList.add('taken');
 
-					if (x1-boardWidth >= 0) computerSquares[x1-boardWidth].classList.add('taken');
-					if (x1+boardWidth <= computerSquares.length - 1) computerSquares[x1+boardWidth].classList.add('taken');
+					if (x1-boardWidth >= 0) {
+						computerSquares[x1-boardWidth].classList.add('taken');
+					}
+					if (x1+boardWidth <= computerSquares.length - 1) {
+						computerSquares[x1+boardWidth].classList.add('taken');
+					}
 				}
 				if (x2 <= computerSquares.length - 1 && x2%10 != 0) {
 					computerSquares[x2].classList.add('taken');
 
-					if (x2-boardWidth >= 0) computerSquares[x2-boardWidth].classList.add('taken');
-					if (x2+boardWidth <= computerSquares.length - 1) computerSquares[x2+boardWidth].classList.add('taken');
+					if (x2-boardWidth >= 0) {
+						computerSquares[x2-boardWidth].classList.add('taken');
+					}
+					if (x2+boardWidth <= computerSquares.length - 1) {
+						computerSquares[x2+boardWidth].classList.add('taken');
+					}
 				}
 				break;
 				default:
@@ -121,41 +138,44 @@ document.addEventListener('DOMContentLoaded', () => {
 		} else if (!isTaken && randomDirection === 1) {
 			currentShipDirection.forEach(index => computerSquares[randomStart + index].classList.add('ship', 'taken', ship.name));
 
-			if (x1 >= 0 && x1%10 != 9) currentShipDirection.forEach(index => computerSquares[x1 + index].classList.add('taken'));
-			if (x2 <= computerSquares.length - 1 && x2%10 != 0) currentShipDirection.forEach(index => computerSquares[x2 + index].classList.add('taken'));
+			if (x1 >= 0 && x1%10 != 9) {
+				currentShipDirection.forEach(index => computerSquares[x1 + index].classList.add('taken'));
+			}
+			if (x2 <= computerSquares.length - 1 && x2%10 != 0) {
+				currentShipDirection.forEach(index => computerSquares[x2 + index].classList.add('taken'));
+			}
 
 			if (y1 >= 0) {
 				computerSquares[y1].classList.add('taken');
 
-				if (y1%10 != 9) computerSquares[y1].nextSibling.classList.add('taken');
-				if (y1%10 != 0) computerSquares[y1].previousSibling.classList.add('taken');
-			} 
+				if (y1%10 != 9) {
+					computerSquares[y1].nextSibling.classList.add('taken');
+				}
+				if (y1%10 != 0) {
+					computerSquares[y1].previousSibling.classList.add('taken');
+				}
+			}
 			if (y2 <= computerSquares.length - 1) {
 				computerSquares[y2].classList.add('taken');
 
-				if (y2%10 != 9) computerSquares[y2].nextSibling.classList.add('taken');
-				if (y2%10 != 0) computerSquares[y2].previousSibling.classList.add('taken');
+				if (y2%10 != 9) {
+					computerSquares[y2].nextSibling.classList.add('taken');
+				}
+				if (y2%10 != 0) {
+					computerSquares[y2].previousSibling.classList.add('taken');
+				}
 			}
 		} else {
 			generate(ship);
 		}
 	};
-	generate(shipArray[3]);
-	generate(shipArray[2]);
-	generate(shipArray[2]);
-	generate(shipArray[1]);
-	generate(shipArray[1]);
-	generate(shipArray[1]);
-	generate(shipArray[0]);
-	generate(shipArray[0]);
-	generate(shipArray[0]);
-	generate(shipArray[0]);
+	shipList.forEach(index => generate(shipArray[index]));
 
-	let rotateShip = (ship) => {
+	const rotateShip = (ship) => {
 		ship.forEach(elem => {
 			elem.classList.toggle('horizontal');
 		});
-	}
+	};
 	destroyer.forEach(item => {
 		item.addEventListener('click', function(){
 			rotateShip(destroyer);
@@ -212,21 +232,33 @@ document.addEventListener('DOMContentLoaded', () => {
 					for(let i=0; i < draggedShipLength; i++){
 						userSquares[shipFirstSquareId + i].classList.add('ship', 'taken', draggedShipClass);
 
-						if(shipFirstSquareId >= 0 && shipFirstSquareId <= 89) userSquares[shipFirstSquareId + boardWidth + i].classList.add('taken');
-						if(shipFirstSquareId >= 10 && shipFirstSquareId <= 99) userSquares[shipFirstSquareId - boardWidth + i].classList.add('taken');
+						if(shipFirstSquareId >= 0 && shipFirstSquareId <= 89) {
+							userSquares[shipFirstSquareId + boardWidth + i].classList.add('taken');
+						}
+						if(shipFirstSquareId >= 10 && shipFirstSquareId <= 99) {
+							userSquares[shipFirstSquareId - boardWidth + i].classList.add('taken');
+						}
 					}
 
 					if ((shipFirstSquareId - 1) >= 0 && (shipFirstSquareId - 1)%10 != 9) {
 						userSquares[shipFirstSquareId - 1].classList.add('taken');
 
-						if ((shipFirstSquareId - 1) - boardWidth >= 0) userSquares[shipFirstSquareId - 1 - boardWidth].classList.add('taken');
-						if ((shipFirstSquareId - 1) + boardWidth <= 99) userSquares[shipFirstSquareId - 1 + boardWidth].classList.add('taken');
+						if ((shipFirstSquareId - 1) - boardWidth >= 0) {
+							userSquares[shipFirstSquareId - 1 - boardWidth].classList.add('taken');
+						}
+						if ((shipFirstSquareId - 1) + boardWidth <= 99) {
+							userSquares[shipFirstSquareId - 1 + boardWidth].classList.add('taken');
+						}
 					}
 					if ((shipLastSquareId + 1) <= 99 && (shipLastSquareId + 1)%10 != 0) {
 						userSquares[shipLastSquareId + 1].classList.add('taken');
 
-						if ((shipLastSquareId + 1) - boardWidth >= 0) userSquares[shipLastSquareId + 1 - boardWidth].classList.add('taken');
-						if ((shipLastSquareId + 1) + boardWidth <= 99) userSquares[shipLastSquareId + 1 + boardWidth].classList.add('taken');
+						if ((shipLastSquareId + 1) - boardWidth >= 0) {
+							userSquares[shipLastSquareId + 1 - boardWidth].classList.add('taken');
+						}
+						if ((shipLastSquareId + 1) + boardWidth <= 99) {
+							userSquares[shipLastSquareId + 1 + boardWidth].classList.add('taken');
+						}
 					}
 
 					shipsContainer.removeChild(draggedShip);
@@ -250,14 +282,20 @@ document.addEventListener('DOMContentLoaded', () => {
 					for(let i=0; i < draggedShipLength; i++){
 						userSquares[shipFirstSquareId + boardWidth*i].classList.add('ship', 'taken', draggedShipClass);
 
-						if((shipFirstSquareId - 1) >= 0 && (shipFirstSquareId - 1)%10 != 9) userSquares[(shipFirstSquareId - 1) + boardWidth*i].classList.add('taken');
-						if((shipFirstSquareId + 1) <= 89 && (shipFirstSquareId + 1)%10 != 0) userSquares[(shipFirstSquareId + 1) + boardWidth*i].classList.add('taken');
+						if((shipFirstSquareId - 1) >= 0 && (shipFirstSquareId - 1)%10 != 9) {
+							userSquares[(shipFirstSquareId - 1) + boardWidth*i].classList.add('taken');
+						}
+						if((shipFirstSquareId + 1) <= 89 && (shipFirstSquareId + 1)%10 != 0) {
+							userSquares[(shipFirstSquareId + 1) + boardWidth*i].classList.add('taken');
+						}
 					}
 
 					if ((shipFirstSquareId - boardWidth) >= 0) {
 						userSquares[(shipFirstSquareId - boardWidth)].classList.add('taken');
 
-						if (((shipFirstSquareId - boardWidth) - 1) >= 0 && ((shipFirstSquareId - boardWidth) - 1)%10 != 9 ) userSquares[((shipFirstSquareId - boardWidth) - 1)].classList.add('taken');
+						if (((shipFirstSquareId - boardWidth) - 1) >= 0 && ((shipFirstSquareId - boardWidth) - 1)%10 != 9 ) {
+							userSquares[((shipFirstSquareId - boardWidth) - 1)].classList.add('taken');
+						}
 						if (((shipFirstSquareId - boardWidth) + 1)%10 != 0) {
 							userSquares[((shipFirstSquareId - boardWidth) + 1)].classList.add('taken');
 						} 
@@ -265,8 +303,12 @@ document.addEventListener('DOMContentLoaded', () => {
 					if ((shipLastSquareId + boardWidth) <= 99) {
 						userSquares[(shipLastSquareId + boardWidth)].classList.add('taken');
 
-						if (((shipLastSquareId + boardWidth) - 1) <= 99 && ((shipLastSquareId + boardWidth) - 1)%10 != 9 ) userSquares[((shipLastSquareId + boardWidth) - 1)].classList.add('taken');
-						if (((shipLastSquareId + boardWidth) + 1)%10 != 0 && ((shipLastSquareId + boardWidth) - 1) <= 99 ) userSquares[((shipLastSquareId + boardWidth) + 1)].classList.add('taken');
+						if (((shipLastSquareId + boardWidth) - 1) <= 99 && ((shipLastSquareId + boardWidth) - 1)%10 != 9 ) {
+							userSquares[((shipLastSquareId + boardWidth) - 1)].classList.add('taken');
+						}
+						if (((shipLastSquareId + boardWidth) + 1)%10 != 0 && ((shipLastSquareId + boardWidth) - 1) <= 99 ) {
+							userSquares[((shipLastSquareId + boardWidth) + 1)].classList.add('taken');
+						}
 					}
 
 					shipsContainer.removeChild(draggedShip);
@@ -278,7 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 		}
 
-		if(shipsContainer.querySelectorAll(".ship").length === 0){
+		if(!shipsContainer.querySelectorAll(".ship").length){
 			startContainer.classList.add('show');
 		}
 	}
@@ -304,13 +346,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	function revealSquare(square) {
 		if(!square.classList.contains('boom')){
-			if(square.classList.contains('ship')) shipCount++;
+			if(square.classList.contains('ship')) {
+				shipCount++;
+			}
 		}
 		if(square.classList.contains('ship')){
 			square.classList.add('boom');
 		} else {
 			square.classList.add('miss');
 		}
+
 		winCheck();
 		currentPlayer = 'computer';
 		playGame();
@@ -325,8 +370,10 @@ document.addEventListener('DOMContentLoaded', () => {
 			} else {
 				userSquares[random].classList.add('miss');
 			}
-
-			if(userSquares[random].classList.contains('ship')) cpuShipCount++;
+			if(userSquares[random].classList.contains('ship')) {
+				cpuShipCount++;
+			}
+			
 			winCheck();
 		} else computerGo ();
 
