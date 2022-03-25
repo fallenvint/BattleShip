@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const status = document.querySelector('.status');
 	const startContainer = document.querySelector('.start-game');
 	const startBtn = document.querySelector('.start-btn');
+	const messageBox = document.querySelector('.message');
 	const userSquares = [];
 	const computerSquares = [];
 	const boardWidth = 10;
@@ -24,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const refrestBtn = document.createElement('input');
 	let currentPlayer = 'user';
 	let isGameOver = false;
+	let userShipSquareArray = [];
 
 	let createBoard = (grid, squares) => {
 		for (let i = 0; i < boardWidth*boardWidth; i++) {
@@ -32,139 +34,78 @@ document.addEventListener('DOMContentLoaded', () => {
 			square.dataset.id = i;
 			grid.appendChild(square);
 			squares.push(square);
+			userShipSquareArray.push(i);
 		}
 	};
 	createBoard(userGrid, userSquares);
 	createBoard(computerGrid, computerSquares);
+	userShipSquareArray = [...new Set(userShipSquareArray)];
 
 	const shipArray = [
-	{
-		name: 'patrol',
-		directions: [
-			[0]
-		]
-	},
-	{
-		name: 'destroyer',
-		directions: [
-			[0, 1],
-			[0, boardWidth]
-		]
-	},
-	{
-		name: 'submarine',
-		directions: [
-			[0, 1, 2],
-			[0, boardWidth, boardWidth*2]
-		]
-	},
-	{
-		name: 'cruiser',
-		directions: [
-			[0, 1, 2, 3],
-			[0, boardWidth, boardWidth*2, boardWidth*3]
-		]
-	}
+		{
+			name: 'patrol',
+			directions: [
+				[0]
+			]
+		},
+		{
+			name: 'destroyer',
+			directions: [
+				[0, 1],
+				[0, boardWidth]
+			]
+		},
+		{
+			name: 'submarine',
+			directions: [
+				[0, 1, 2],
+				[0, boardWidth, boardWidth*2]
+			]
+		},
+		{
+			name: 'cruiser',
+			directions: [
+				[0, 1, 2, 3],
+				[0, boardWidth, boardWidth*2, boardWidth*3]
+			]
+		}
 	];
 
 	let generate = (ship) => {
 		let randomDirection = Math.floor(Math.random() * ship.directions.length);
 		let currentShipDirection = ship.directions[randomDirection];
+		let shipCoordinates = [];
+		let siblinsSquares = [];
 
 		if (randomDirection === 0) {
 			direction = 1;
-		}
-		if (randomDirection === 1) {
+		} else {
 			direction = 10;
 		}
 
 		let randomStart = Math.abs(Math.floor(Math.random() * computerSquares.length - (ship.directions[0].length * direction)));
-		const isTaken = currentShipDirection.some(index => computerSquares[randomStart + index].classList.contains('taken'));
-		let x1, x2, y1, y2;
 
-		x1 = randomStart - 1;
-		y1 = randomStart - boardWidth;
+		currentShipDirection.forEach(index => shipCoordinates.push(randomStart + index));
+		siblinsSquares = markSiblingElements(shipCoordinates);
 
-		if (randomDirection === 0) {
-			x2 = randomStart + ship.directions[0].length;
-			y2 = randomStart + boardWidth;
-		}
-		
-		if (randomDirection === 1) {
-			x2 = randomStart + 1;
-			y2 = randomStart + boardWidth*ship.directions[0].length;
-		}
-		
+		const isTaken = shipCoordinates.some(index => computerSquares[index].classList.contains('taken'));
+
 		if (!isTaken && randomDirection === 0) {
 			switch (true) {
 				case (ship.directions[0].length === 4 && !(randomStart%boardWidth >= 7)):
 				case (ship.directions[0].length === 3 && !(randomStart%boardWidth >= 8)):
 				case (ship.directions[0].length === 2 && !(randomStart%boardWidth >= 9)):
 				case (ship.name === 'patrol'):
-				currentShipDirection.forEach(index => computerSquares[randomStart + index].classList.add('ship', 'taken', ship.name));
-
-				if (y1 >= 0) {
-					currentShipDirection.forEach(index => computerSquares[y1 + index].classList.add('taken'));
-				}
-				if (y2 <= computerSquares.length - 1) {
-					currentShipDirection.forEach(index => computerSquares[y2 + index].classList.add('taken'));
-				}
-
-				if (x1 >= 0 && x1%10 != 9) {
-					computerSquares[x1].classList.add('taken');
-
-					if (x1-boardWidth >= 0) {
-						computerSquares[x1-boardWidth].classList.add('taken');
-					}
-					if (x1+boardWidth <= computerSquares.length - 1) {
-						computerSquares[x1+boardWidth].classList.add('taken');
-					}
-				}
-				if (x2 <= computerSquares.length - 1 && x2%10 != 0) {
-					computerSquares[x2].classList.add('taken');
-
-					if (x2-boardWidth >= 0) {
-						computerSquares[x2-boardWidth].classList.add('taken');
-					}
-					if (x2+boardWidth <= computerSquares.length - 1) {
-						computerSquares[x2+boardWidth].classList.add('taken');
-					}
-				}
+					shipCoordinates.forEach(index => computerSquares[index].classList.add('ship', 'taken', ship.name));
+					siblinsSquares.forEach(index => computerSquares[index].classList.add('taken'));
 				break;
 				default:
-				generate(ship);
+					generate(ship);
 				break;
 			}
 		} else if (!isTaken && randomDirection === 1) {
-			currentShipDirection.forEach(index => computerSquares[randomStart + index].classList.add('ship', 'taken', ship.name));
-
-			if (x1 >= 0 && x1%10 != 9) {
-				currentShipDirection.forEach(index => computerSquares[x1 + index].classList.add('taken'));
-			}
-			if (x2 <= computerSquares.length - 1 && x2%10 != 0) {
-				currentShipDirection.forEach(index => computerSquares[x2 + index].classList.add('taken'));
-			}
-
-			if (y1 >= 0) {
-				computerSquares[y1].classList.add('taken');
-
-				if (y1%10 != 9) {
-					computerSquares[y1].nextSibling.classList.add('taken');
-				}
-				if (y1%10 != 0) {
-					computerSquares[y1].previousSibling.classList.add('taken');
-				}
-			}
-			if (y2 <= computerSquares.length - 1) {
-				computerSquares[y2].classList.add('taken');
-
-				if (y2%10 != 9) {
-					computerSquares[y2].nextSibling.classList.add('taken');
-				}
-				if (y2%10 != 0) {
-					computerSquares[y2].previousSibling.classList.add('taken');
-				}
-			}
+			shipCoordinates.forEach(index => computerSquares[index].classList.add('ship', 'taken', ship.name));
+			siblinsSquares.forEach(index => computerSquares[index].classList.add('taken'));
 		} else {
 			generate(ship);
 		}
@@ -176,16 +117,19 @@ document.addEventListener('DOMContentLoaded', () => {
 			elem.classList.toggle('horizontal');
 		});
 	};
+
 	destroyer.forEach(item => {
 		item.addEventListener('click', function(){
 			rotateShip(destroyer);
 		});
 	});
+
 	submarine.forEach(item => {
 		item.addEventListener('click', function(){
 			rotateShip(submarine);
 		});
 	});
+
 	cruiser.addEventListener('click', function(){
 		this.classList.toggle('horizontal');
 	});
@@ -216,10 +160,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	function dragDrop () {
 		let isHorizontal = draggedShip.classList.contains('horizontal');
+		let shipFirstSquareId, shipLastSquareId;
+		let draggedShipCoordinates = [];
+		let draggedSiblinsSquares = [];
 
 		if (isHorizontal || draggedShipLength === 1) {
-			let shipFirstSquareId = +this.dataset.id - selectedShipIndex;
-			let shipLastSquareId = shipFirstSquareId + draggedShipLength - 1;
+			shipFirstSquareId = +this.dataset.id - selectedShipIndex;
+			shipLastSquareId = shipFirstSquareId + draggedShipLength - 1;
 
 			switch (true) {
 				case (draggedShipLength === 4 && !(shipFirstSquareId%boardWidth >= 7)):
@@ -231,35 +178,12 @@ document.addEventListener('DOMContentLoaded', () => {
 				} else {
 					for(let i=0; i < draggedShipLength; i++){
 						userSquares[shipFirstSquareId + i].classList.add('ship', 'taken', draggedShipClass);
-
-						if(shipFirstSquareId >= 0 && shipFirstSquareId <= 89) {
-							userSquares[shipFirstSquareId + boardWidth + i].classList.add('taken');
-						}
-						if(shipFirstSquareId >= 10 && shipFirstSquareId <= 99) {
-							userSquares[shipFirstSquareId - boardWidth + i].classList.add('taken');
-						}
+						draggedShipCoordinates.push(shipFirstSquareId + i);
 					}
 
-					if ((shipFirstSquareId - 1) >= 0 && (shipFirstSquareId - 1)%10 != 9) {
-						userSquares[shipFirstSquareId - 1].classList.add('taken');
+					draggedSiblinsSquares = markSiblingElements(draggedShipCoordinates);
+					draggedSiblinsSquares.forEach(index => userSquares[index].classList.add('taken'));
 
-						if ((shipFirstSquareId - 1) - boardWidth >= 0) {
-							userSquares[shipFirstSquareId - 1 - boardWidth].classList.add('taken');
-						}
-						if ((shipFirstSquareId - 1) + boardWidth <= 99) {
-							userSquares[shipFirstSquareId - 1 + boardWidth].classList.add('taken');
-						}
-					}
-					if ((shipLastSquareId + 1) <= 99 && (shipLastSquareId + 1)%10 != 0) {
-						userSquares[shipLastSquareId + 1].classList.add('taken');
-
-						if ((shipLastSquareId + 1) - boardWidth >= 0) {
-							userSquares[shipLastSquareId + 1 - boardWidth].classList.add('taken');
-						}
-						if ((shipLastSquareId + 1) + boardWidth <= 99) {
-							userSquares[shipLastSquareId + 1 + boardWidth].classList.add('taken');
-						}
-					}
 
 					shipsContainer.removeChild(draggedShip);
 				}
@@ -269,8 +193,8 @@ document.addEventListener('DOMContentLoaded', () => {
 				break;
 			}
 		} else if (!isHorizontal) {
-			let shipFirstSquareId = +this.dataset.id - selectedShipIndex*boardWidth;
-			let shipLastSquareId = shipFirstSquareId + (draggedShipLength - 1)*boardWidth;
+			shipFirstSquareId = +this.dataset.id - selectedShipIndex*boardWidth;
+			shipLastSquareId = shipFirstSquareId + (draggedShipLength - 1)*boardWidth;
 
 			switch (true) {
 				case (draggedShipLength === 4 && shipFirstSquareId <= 69 && shipFirstSquareId >= 0):
@@ -281,35 +205,11 @@ document.addEventListener('DOMContentLoaded', () => {
 				} else {
 					for(let i=0; i < draggedShipLength; i++){
 						userSquares[shipFirstSquareId + boardWidth*i].classList.add('ship', 'taken', draggedShipClass);
-
-						if((shipFirstSquareId - 1) >= 0 && (shipFirstSquareId - 1)%10 != 9) {
-							userSquares[(shipFirstSquareId - 1) + boardWidth*i].classList.add('taken');
-						}
-						if((shipFirstSquareId + 1) <= 89 && (shipFirstSquareId + 1)%10 != 0) {
-							userSquares[(shipFirstSquareId + 1) + boardWidth*i].classList.add('taken');
-						}
+						draggedShipCoordinates.push(shipFirstSquareId + boardWidth*i);
 					}
 
-					if ((shipFirstSquareId - boardWidth) >= 0) {
-						userSquares[(shipFirstSquareId - boardWidth)].classList.add('taken');
-
-						if (((shipFirstSquareId - boardWidth) - 1) >= 0 && ((shipFirstSquareId - boardWidth) - 1)%10 != 9 ) {
-							userSquares[((shipFirstSquareId - boardWidth) - 1)].classList.add('taken');
-						}
-						if (((shipFirstSquareId - boardWidth) + 1)%10 != 0) {
-							userSquares[((shipFirstSquareId - boardWidth) + 1)].classList.add('taken');
-						} 
-					}
-					if ((shipLastSquareId + boardWidth) <= 99) {
-						userSquares[(shipLastSquareId + boardWidth)].classList.add('taken');
-
-						if (((shipLastSquareId + boardWidth) - 1) <= 99 && ((shipLastSquareId + boardWidth) - 1)%10 != 9 ) {
-							userSquares[((shipLastSquareId + boardWidth) - 1)].classList.add('taken');
-						}
-						if (((shipLastSquareId + boardWidth) + 1)%10 != 0 && ((shipLastSquareId + boardWidth) - 1) <= 99 ) {
-							userSquares[((shipLastSquareId + boardWidth) + 1)].classList.add('taken');
-						}
-					}
+					draggedSiblinsSquares = markSiblingElements(draggedShipCoordinates);
+					draggedSiblinsSquares.forEach(index => userSquares[index].classList.add('taken'));
 
 					shipsContainer.removeChild(draggedShip);
 				}
@@ -322,6 +222,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		if(!shipsContainer.querySelectorAll(".ship").length){
 			startContainer.classList.add('show');
+			shipsContainer.remove();
+			messageBox.innerHTML = '';
 		}
 	}
 
@@ -330,26 +232,47 @@ document.addEventListener('DOMContentLoaded', () => {
 		if (currentPlayer === 'user') {
 			status.innerHTML = 'Ваш ход!'
 			computerSquares.forEach(square => square.addEventListener('click', function(e) {
-				revealSquare(square);
+				if(square.classList.contains('miss') || square.classList.contains('boom')){
+					alert('Здесь ничего нет, уже стреляли!');
+				} else {
+					revealSquare(square);
+				}
 			}));
 		}
 		if (currentPlayer === 'computer') {
+			messageBox.innerHTML = '';
 			status.innerHTML = 'Ход соперника!'
-			setTimeout(computerGo, 1500);
+			setTimeout(computerGo, 500);
 			computerGrid.classList.add('closed');
 		}
 	}
+
 	startBtn.addEventListener('click', () => {
 		startContainer.classList.remove('show');
 		playGame();
 	});
 
+	let patrolCount = 0;
+	let destroyerCount = 0;
+	let submarineCount = 0;
+	let cruiserCount = 0;
+
 	function revealSquare(square) {
 		if(!square.classList.contains('boom')){
 			if(square.classList.contains('ship')) {
+				if (square.classList.contains('destroyer')) destroyerCount++;
+				if (square.classList.contains('submarine')) submarineCount++;
+				if (square.classList.contains('cruiser')) cruiserCount++;
+				if (square.classList.contains('patrol') || (square.classList.contains('destroyer') && destroyerCount%2 === 0) || (square.classList.contains('submarine') && submarineCount%3 === 0) || (square.classList.contains('cruiser') && cruiserCount%4 === 0)) {
+					alert('Убил!');
+				} else {
+					alert('Попадание, ранил!');
+				}
+
 				shipCount++;
 			}
 		}
+
 		if(square.classList.contains('ship')){
 			square.classList.add('boom');
 		} else {
@@ -361,25 +284,131 @@ document.addEventListener('DOMContentLoaded', () => {
 		playGame();
 	}
 
-	function computerGo() {
-		let random = Math.floor(Math.random() * userSquares.length);
+	let potential = [];
+	let hits = [];
+	let random;
+	let patrolCountComp = 0;
+	let destroyerCountComp = 0;
+	let submarineCountComp = 0;
+	let cruiserCountComp = 0;
 
-		if(!userSquares[random].classList.contains('boom')){
+	function computerGo() {
+		if (!potential.length){
+			random = userShipSquareArray[Math.floor(Math.random() * userShipSquareArray.length)];
+		} else {
+			random = potential[Math.floor(Math.random() * potential.length)];
+		}
+
+		if(!userSquares[random].classList.contains('boom') && !userSquares[random].classList.contains('miss')){
 			if(userSquares[random].classList.contains('ship')){
 				userSquares[random].classList.add('boom');
+				addPotentialHits(random);
+
+				if (userSquares[random].classList.contains('destroyer')) destroyerCountComp++;
+				if (userSquares[random].classList.contains('submarine')) submarineCountComp++;
+				if (userSquares[random].classList.contains('cruiser')) cruiserCountComp++;
+
+				cpuShipCount++;
 			} else {
 				userSquares[random].classList.add('miss');
 			}
-			if(userSquares[random].classList.contains('ship')) {
-				cpuShipCount++;
-			}
-			
-			winCheck();
-		} else computerGo ();
 
-		currentPlayer = 'user';
-		status.innerHTML = 'Ваш ход!';
-		computerGrid.classList.remove('closed');
+			if(potential.length){
+				removePotentialHits(random);
+			}
+		} else {
+			computerGo();
+		}
+
+		if (cruiserCountComp === 4 || submarineCountComp === 3 || destroyerCountComp === 2 || userSquares[random].classList.contains('patrol')){
+			let marked = markSiblingElements(hits);
+
+			marked.forEach(function(elem){
+				if(userShipSquareArray.includes(elem)){
+					return userShipSquareArray.splice(userShipSquareArray.indexOf(elem),1);
+				}
+			});
+
+			hits = [];
+			potential = [];
+			cruiserCountComp = 0;
+			submarineCountComp = 0;
+			destroyerCountComp = 0;
+		}
+
+		if(cpuShipCount === 20){
+			winCheck();
+		} else {
+			currentPlayer = 'user';
+			status.innerHTML = 'Ваш ход!';
+			computerGrid.classList.remove('closed');
+		}
+	}
+
+	function addPotentialHits(randomhit){
+		hits.push(randomhit);
+
+		if(!potential.length){
+			potential.push(randomhit - 1, randomhit + 1, randomhit - 10, randomhit + 10);
+		} else {
+			if(randomhit-hits[0] === -1 || randomhit-hits[0] === -2 ){
+				potential.push(randomhit - 1);
+			} else if(randomhit-hits[0] === 1 || randomhit-hits[0] === 2) {
+				potential.push(randomhit + 1);
+			} else if(randomhit-hits[0] === -10 || randomhit-hits[0] === -20){
+				potential.push(randomhit - 10);
+			} else if(randomhit-hits[0] === 10 || randomhit-hits[0] === 20) {
+				potential.push(randomhit + 10);
+			}
+		}
+
+		potential = potential.filter(index => compareSibling(index, randomhit, randomhit));
+	}
+
+	function removePotentialHits(randomhit){
+		if(hits.length >= 2){
+			for(let i = 0; i < potential.length; i++){
+				if (potential[i] === randomhit || ((potential[i]%10 === hits[0]%10) && Math.abs(randomhit-hits[0]) <= 2) || (Math.abs(randomhit-hits[0]) === 10) && Math.abs(potential[i]-hits[0]) === 1) {
+					potential[i] = null;
+				}
+			}
+		} else {
+			for(let i = 0; i < potential.length; i++){
+				if (potential[i] === randomhit) {
+					potential.splice(i, 1);
+				}
+			}
+		}
+
+		potential = potential.filter(function(item) {
+			return item != null;
+		});
+	}
+
+	function markSiblingElements(array){
+		let markArray = [];
+		array.sort();
+
+		for(let i = 0; i < array.length; i++){
+			markArray.push(array[i]-11, array[i]-10, array[i]-9, array[i]-1, array[i]+1, array[i]+9, array[i]+10, array[i]+11);
+		}
+
+		markArray = [...new Set(markArray)].sort();
+		markArray = markArray.filter(index => compareSibling(index, array[0], array[array.length-1]));
+
+		return markArray;
+	}
+
+	function compareSibling (item, elem1, elem2) {
+		if(item >= 0 && item < 100){
+			if(elem1%10 === 0){
+				return item%10 != 9;
+			} else if(elem2%10 === 9){
+				return item%10 != 0;
+			} else {
+				return true;
+			}
+		}
 	}
 
 	function winCheck() {
