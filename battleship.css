@@ -203,6 +203,10 @@ body {
 	background-color: transparent;
 }
 
+.message {
+	text-align: center;
+}
+
 .taken {
 	background-color: #e5e5e5;
 }

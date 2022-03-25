@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const messageBox = document.querySelector('.message');
 	const userSquares = [];
 	const computerSquares = [];
+	const userShipSquareArray = [];
 	const boardWidth = 10;
 	const shipList = [3,2,2,1,1,1,0,0,0,0];
 	let selectedShipIndex;
@@ -25,7 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	const refrestBtn = document.createElement('input');
 	let currentPlayer = 'user';
 	let isGameOver = false;
-	let userShipSquareArray = [];
 
 	let createBoard = (grid, squares) => {
 		for (let i = 0; i < boardWidth*boardWidth; i++) {
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	};
 	createBoard(userGrid, userSquares);
 	createBoard(computerGrid, computerSquares);
-	userShipSquareArray = [...new Set(userShipSquareArray)];
+	computerSquares.forEach((element, index, array) => userShipSquareArray.push(index));
 
 	const shipArray = [
 		{
@@ -173,23 +173,21 @@ document.addEventListener('DOMContentLoaded', () => {
 				case (draggedShipLength === 3 && !(shipFirstSquareId%boardWidth >= 8)):
 				case (draggedShipLength === 2 && !(shipFirstSquareId%boardWidth >= 9)):
 				case (draggedShipLength === 1):
-				if((userSquares[shipFirstSquareId].classList.contains('taken')) || (userSquares[shipLastSquareId].classList.contains('taken'))) {
-					alert('Слишком плотно! Нужно сменить позицию корабля.');
-				} else {
-					for(let i=0; i < draggedShipLength; i++){
-						userSquares[shipFirstSquareId + i].classList.add('ship', 'taken', draggedShipClass);
-						draggedShipCoordinates.push(shipFirstSquareId + i);
+					if((userSquares[shipFirstSquareId].classList.contains('taken')) || (userSquares[shipLastSquareId].classList.contains('taken'))) {
+						alert('Слишком плотно! Нужно сменить позицию корабля.');
+					} else {
+						for(let i=0; i < draggedShipLength; i++){
+							userSquares[shipFirstSquareId + i].classList.add('ship', 'taken', draggedShipClass);
+							draggedShipCoordinates.push(shipFirstSquareId + i);
+						}
+
+						draggedSiblinsSquares = markSiblingElements(draggedShipCoordinates);
+						draggedSiblinsSquares.forEach(index => userSquares[index].classList.add('taken'));
+						shipsContainer.removeChild(draggedShip);
 					}
-
-					draggedSiblinsSquares = markSiblingElements(draggedShipCoordinates);
-					draggedSiblinsSquares.forEach(index => userSquares[index].classList.add('taken'));
-
-
-					shipsContainer.removeChild(draggedShip);
-				}
 				break;
 				default:
-				alert('Выходим за поля! Нужно сменить позицию корабля.');
+					alert('Выходим за поля! Нужно сменить позицию корабля.');
 				break;
 			}
 		} else if (!isHorizontal) {
@@ -200,22 +198,21 @@ document.addEventListener('DOMContentLoaded', () => {
 				case (draggedShipLength === 4 && shipFirstSquareId <= 69 && shipFirstSquareId >= 0):
 				case (draggedShipLength === 3 && shipFirstSquareId <= 79 && shipFirstSquareId >= 0):
 				case (draggedShipLength === 2 && shipFirstSquareId <= 89 && shipFirstSquareId >= 0):
-				if((userSquares[shipFirstSquareId].classList.contains('taken')) || (userSquares[shipLastSquareId].classList.contains('taken'))) {
-					alert('Слишком плотно! Нужно сменить позицию корабля.');
-				} else {
-					for(let i=0; i < draggedShipLength; i++){
-						userSquares[shipFirstSquareId + boardWidth*i].classList.add('ship', 'taken', draggedShipClass);
-						draggedShipCoordinates.push(shipFirstSquareId + boardWidth*i);
+					if((userSquares[shipFirstSquareId].classList.contains('taken')) || (userSquares[shipLastSquareId].classList.contains('taken'))) {
+						alert('Слишком плотно! Нужно сменить позицию корабля.');
+					} else {
+						for(let i=0; i < draggedShipLength; i++){
+							userSquares[shipFirstSquareId + boardWidth*i].classList.add('ship', 'taken', draggedShipClass);
+							draggedShipCoordinates.push(shipFirstSquareId + boardWidth*i);
+						}
+
+						draggedSiblinsSquares = markSiblingElements(draggedShipCoordinates);
+						draggedSiblinsSquares.forEach(index => userSquares[index].classList.add('taken'));
+						shipsContainer.removeChild(draggedShip);
 					}
-
-					draggedSiblinsSquares = markSiblingElements(draggedShipCoordinates);
-					draggedSiblinsSquares.forEach(index => userSquares[index].classList.add('taken'));
-
-					shipsContainer.removeChild(draggedShip);
-				}
 				break;
 				default:
-				alert('Выходим за поля! Нужно сменить позицию корабля.');
+					alert('Выходим за поля! Нужно сменить позицию корабля.');
 				break;
 			}
 		}
@@ -230,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	function playGame() {
 		if(isGameOver) return;
 		if (currentPlayer === 'user') {
-			status.innerHTML = 'Ваш ход!'
+			status.innerHTML = 'Ваш ход!';
 			computerSquares.forEach(square => square.addEventListener('click', function(e) {
 				if(square.classList.contains('miss') || square.classList.contains('boom')){
 					alert('Здесь ничего нет, уже стреляли!');
@@ -241,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 		if (currentPlayer === 'computer') {
 			messageBox.innerHTML = '';
-			status.innerHTML = 'Ход соперника!'
+			status.innerHTML = 'Ход соперника!';
 			setTimeout(computerGo, 500);
 			computerGrid.classList.add('closed');
 		}
@@ -323,9 +320,9 @@ document.addEventListener('DOMContentLoaded', () => {
 		if (cruiserCountComp === 4 || submarineCountComp === 3 || destroyerCountComp === 2 || userSquares[random].classList.contains('patrol')){
 			let marked = markSiblingElements(hits);
 
-			marked.forEach(function(elem){
-				if(userShipSquareArray.includes(elem)){
-					return userShipSquareArray.splice(userShipSquareArray.indexOf(elem),1);
+			marked.forEach((element, index, array) => {
+				if(userShipSquareArray.includes(element)){
+					return userShipSquareArray.splice(index,1);
 				}
 			});
 
@@ -393,10 +390,8 @@ document.addEventListener('DOMContentLoaded', () => {
 			markArray.push(array[i]-11, array[i]-10, array[i]-9, array[i]-1, array[i]+1, array[i]+9, array[i]+10, array[i]+11);
 		}
 
-		markArray = [...new Set(markArray)].sort();
-		markArray = markArray.filter(index => compareSibling(index, array[0], array[array.length-1]));
-
-		return markArray;
+		markArray = [...new Set(markArray)].filter(index => compareSibling(index, array[0], array[array.length-1]));
+		return markArray.sort();
 	}
 
 	function compareSibling (item, elem1, elem2) {
