@@ -34,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			square.dataset.id = i;
 			grid.appendChild(square);
 			squares.push(square);
-			userShipSquareArray.push(i);
 		}
 	};
 	createBoard(userGrid, userSquares);

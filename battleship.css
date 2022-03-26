@@ -212,7 +212,7 @@ body {
 }
 
 .patrol {
-	background-color: red;
+	background-color: palevioletred;
 }
 
 .destroyer {
@@ -232,5 +232,5 @@ body {
 }
 
 .boom {
-	background-color: orange !important;
+	background-color: red !important;
 }
